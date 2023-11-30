@@ -18,7 +18,7 @@ func connectRemoteWS(wsUrl string) {
 			if err != nil {
 				log.Warn("连接远程websocket失败:", err)
 				log.Info("将在3秒后重连")
-				time.Sleep(3)
+				time.Sleep(3 * time.Second)
 			}
 		}
 	}()

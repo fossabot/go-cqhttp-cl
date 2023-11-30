@@ -17,7 +17,7 @@ var (
 )
 
 func Parse() {
-	flag.StringVar(&LittleC, "c", "config.yml", "配置文件路径")
+	flag.StringVar(&LittleC, "c", "conf.yml", "配置文件路径")
 	flag.BoolVar(&LittleH, "h", false, "this Help")
 	d := flag.Bool("D", false, "是否开启debug模式")
 	flag.Parse()

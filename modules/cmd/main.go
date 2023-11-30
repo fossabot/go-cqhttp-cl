@@ -8,6 +8,7 @@ import (
 	"github.com/Redmomn/go-cqhttp-cl/modules/log_imitate"
 	"github.com/Redmomn/go-cqhttp-cl/modules/terminal"
 	"github.com/Redmomn/go-cqhttp-cl/server/http"
+	"github.com/Redmomn/go-cqhttp-cl/server/ws"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
@@ -26,6 +27,7 @@ func Init() {
 	common.Conf.InitConf(conf)
 	// 启动服务器
 	http.StartReverseProxy(conf.Local.HTTP.Address, conf.Local.HTTP.Port, conf.Remote.HTTP.URL)
+	ws.StartWS(conf.Local.WS.Address, conf.Local.WS.Port, conf.Remote.WS.URL)
 }
 
 func InitBase() {

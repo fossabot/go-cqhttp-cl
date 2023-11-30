@@ -26,15 +26,15 @@ func RunningByDoubleClick() bool {
 // NoMoreDoubleClick 提示用户不要双击运行，并生成安全启动脚本
 func NoMoreDoubleClick() error {
 	toHighDPI()
-	r := boxW(getConsoleWindows(), "请勿通过双击直接运行本程序, 这将导致一些非预料的后果.\n请在shell中运行./github.com/Redmomn/BFV-WTS.exe\n点击确认将释出安全启动脚本，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
+	r := boxW(getConsoleWindows(), "请勿通过双击直接运行本程序, 这将导致一些非预料的后果.\n请在shell中运行./go-cqhttp.exe\n点击确认将释出安全启动脚本，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
 	if r == 2 {
 		return nil
 	}
-	r = boxW(0, "点击确认将覆盖BFV-WTS.bat，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
+	r = boxW(0, "点击确认将覆盖go.bat，点击取消则关闭程序", "警告", 0x00000030|0x00000001)
 	if r == 2 {
 		return nil
 	}
-	f, err := os.OpenFile("BFV-WTS.bat", os.O_CREATE|os.O_RDWR, 0o666)
+	f, err := os.OpenFile("go.bat", os.O_CREATE|os.O_RDWR, 0o666)
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func NoMoreDoubleClick() error {
 		return errors.Errorf("写入go-cqhttp.bat失败: %v", err)
 	}
 	_ = f.Close()
-	boxW(0, "安全启动脚本已生成，请双击BFV-WTS.bat启动", "提示", 0x00000040|0x00000000)
+	boxW(0, "安全启动脚本已生成，请双击go.bat启动", "提示", 0x00000040|0x00000000)
 	return nil
 }
 
