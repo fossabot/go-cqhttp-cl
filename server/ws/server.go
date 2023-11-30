@@ -24,7 +24,7 @@ func StartWSServer(host string, port string) {
 	}
 
 	router := mux.NewRouter()
-	router.HandleFunc("", handleConnections)
+	router.HandleFunc("/", handleConnections)
 
 	go func() {
 		err := http.ListenAndServe(net.JoinHostPort(host, port), router)
@@ -50,32 +50,29 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("升级为ws连接时出现错误", err)
 	}
 
-	Clients.addConnection(conn)
-
-	defer func(conn *websocket.Conn) {
-		_ = conn.Close()
-	}(conn)
-
+	Clients.addConnection(&Conn{
+		conn: conn,
+	})
 }
 
-func (cp *ConnPool) addConnection(conn *websocket.Conn) {
+func (cp *ConnPool) addConnection(conn *Conn) {
 	cp.dataMux.Lock()
 	defer cp.dataMux.Unlock()
 
 	cp.WSConn = append(cp.WSConn, conn)
-	log.Info("接受新的websocket连接：", conn)
+	log.Info("接受新的websocket连接：", conn.conn)
 }
 
-func (cp *ConnPool) removeConnection(conn *websocket.Conn) {
+func (cp *ConnPool) removeConnection(conn *Conn) {
 	cp.dataMux.RUnlock()
 	cp.dataMux.Lock()
 	defer cp.dataMux.Unlock()
 	defer func(conn *websocket.Conn) {
 		_ = conn.Close()
-	}(conn)
+	}(conn.conn)
 
 	for i, c := range cp.WSConn {
-		if c == conn {
+		if c.conn == conn.conn {
 			cp.WSConn = append(cp.WSConn[:i], cp.WSConn[i+1:]...)
 			log.Info("websocket连接断开：", conn)
 			break
@@ -113,27 +110,31 @@ func (cp *ConnPool) closeConnection(conn *websocket.Conn) {
 
 // 消息转发
 func (cp *ConnPool) forwardMsg() {
-	var wg sync.WaitGroup
-	msgData := <-messageChan
-	cp.dataMux.RLock()
-	defer cp.dataMux.RUnlock()
+	for msgData := range messageChan {
+		go func(data []byte) {
+			cp.dataMux.RLock()
+			defer cp.dataMux.RUnlock()
+			for _, c := range cp.WSConn {
+				func(c *Conn) {
+					c.connMux.Lock()
+					defer c.connMux.Unlock()
 
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-		for _, c := range cp.WSConn {
-			err := c.WriteMessage(websocket.TextMessage, msgData)
-			if err != nil {
-				cp.removeConnection(c)
+					err := c.conn.WriteMessage(websocket.TextMessage, data)
+					if err != nil {
+						cp.removeConnection(c)
+					}
+				}(c)
 			}
-		}
-	}()
-
-	wg.Wait()
+		}(msgData)
+	}
 }
 
 type ConnPool struct {
-	WSConn  []*websocket.Conn
+	WSConn  []*Conn
 	dataMux sync.RWMutex
+}
+
+type Conn struct {
+	conn    *websocket.Conn
+	connMux sync.RWMutex
 }
