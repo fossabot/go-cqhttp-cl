@@ -28,8 +28,7 @@ func Parse() {
 }
 
 func Help() {
-	fmt.Printf(`战地五暖服工具后端服务
-版本：%v
+	fmt.Printf(`版本：%v
 使用方法：
 `, Version)
 
