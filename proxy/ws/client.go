@@ -80,7 +80,7 @@ func handleMessage(conn *websocket.Conn) error {
 
 			err := conn.WriteMessage(websocket.TextMessage, data)
 			if err != nil {
-				log.Warn("读取消息发生错误：", err)
+				log.Warn("发送消息发生错误：", err)
 				errorChan <- err
 				return
 			}
