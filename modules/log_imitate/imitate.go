@@ -26,7 +26,7 @@ func LogImit() {
 	logger.Println("开始尝试登录并同步消息...")
 	time.Sleep(500 * time.Millisecond)
 	logger.Println("使用协议: Android Pad 8.9.63.11390")
-	logger.Println("Protocol -> connect to server: 120.232.130.13:8080")
+	logger.Println("Protocol -> connect to proxy: 120.232.130.13:8080")
 	time.Sleep(500 * time.Millisecond)
 	logger.Println("Protocol -> device lock is disabled. HTTP API may fail.")
 	time.Sleep(500 * time.Millisecond)

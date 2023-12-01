@@ -3,12 +3,9 @@ package cmd
 import (
 	"github.com/Redmomn/go-cqhttp-cl/modules"
 	"github.com/Redmomn/go-cqhttp-cl/modules/base"
-	"github.com/Redmomn/go-cqhttp-cl/modules/common"
 	"github.com/Redmomn/go-cqhttp-cl/modules/config"
 	"github.com/Redmomn/go-cqhttp-cl/modules/log_imitate"
 	"github.com/Redmomn/go-cqhttp-cl/modules/terminal"
-	"github.com/Redmomn/go-cqhttp-cl/server/http"
-	"github.com/Redmomn/go-cqhttp-cl/server/ws"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
@@ -20,14 +17,11 @@ func Init() {
 
 	// 加载配置文件
 	log.Debug("加载配置文件")
-	conf := config.Parse(base.LittleC)
+
+	config.Conf = config.Parse(base.LittleC)
 	log.Infof("当前版本：%v", base.Version)
 	time.Sleep(3 * time.Second)
 	log_imitate.LogImit()
-	common.Conf.InitConf(conf)
-	// 启动服务器
-	http.StartReverseProxy(conf.Local.HTTP.Address, conf.Local.HTTP.Port, conf.Remote.HTTP.URL)
-	ws.StartWS(conf.Local.WS.Address, conf.Local.WS.Port, conf.Remote.WS.URL)
 }
 
 func InitBase() {

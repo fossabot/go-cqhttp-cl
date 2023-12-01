@@ -14,11 +14,13 @@ import (
 //go:embed default_config.yaml
 var defaultConfig string
 
-func Parse(path string) *Config {
+var Conf Config
+
+func Parse(path string) Config {
 	file, err := os.ReadFile(path)
-	config := &Config{}
+	config := Config{}
 	if err == nil {
-		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv))).Decode(config)
+		err = yaml.NewDecoder(strings.NewReader(expand(string(file), os.Getenv))).Decode(&config)
 		if err != nil {
 			log.Fatal("配置文件不合法!", err)
 		}
@@ -56,29 +58,24 @@ func expand(s string, mapping func(string) string) string {
 
 // Config 解析配置的结构体
 type Config struct {
-	Local  ServerConfig `yaml:"local"`
-	Remote RemoteConfig `yaml:"remote"`
+	Token            string          `yaml:"token"`
+	Websocket        WebSocketConfig `yaml:"websocket"`
+	HttpReverseProxy ProxyConfig     `yaml:"http_reverse_proxy"`
+	TcpProxy         ProxyConfig     `yaml:"tcp_proxy"`
 }
 
-// ServerConfig 服务端配置
-type ServerConfig struct {
-	ImageSendDelay int `yaml:"image_send_delay"` // http和ws服务的监听地址
-	WS             struct {
-		Address string `yaml:"address"`
-		Port    string `yaml:"port"`
-	}
-	HTTP struct {
-		Address string `yaml:"address"`
-		Port    string `yaml:"port"`
-	}
+type WebSocketConfig struct {
+	Enable    bool   `yaml:"enable"`
+	RemoteUrl string `yaml:"url"`
+	Listen    string `yaml:"listen"`
 }
-type RemoteConfig struct {
-	AccessToken string `yaml:"access-token"`
 
-	WS struct {
-		URL string `yaml:"url"`
-	}
-	HTTP struct {
-		URL string `yaml:"url"`
-	}
+type ProxyConfig struct {
+	Enable bool           `yaml:"enable"`
+	Proxys []ProxysConfig `yaml:"proxys"`
+}
+
+type ProxysConfig struct {
+	From string `yaml:"from"`
+	To   string `yaml:"to"`
 }

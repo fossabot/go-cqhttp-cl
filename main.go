@@ -1,18 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"github.com/Redmomn/go-cqhttp-cl/modules/cmd"
-	"log"
-	"os"
+	"github.com/Redmomn/go-cqhttp-cl/modules/config"
+	"github.com/Redmomn/go-cqhttp-cl/proxy"
 )
-
-// 创建自定义日志记录器
-var logger = log.New(os.Stdout, "", 0)
 
 func main() {
 	cmd.Init()
+	// 启动服务器
+	proxy.InitServer(config.Conf)
 
-	reader := bufio.NewReader(os.Stdin)
-	_, _ = reader.ReadString('\n')
+	select {}
 }
