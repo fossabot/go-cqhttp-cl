@@ -63,7 +63,7 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 构建POST请求
-	req, err := http.NewRequest("POST", proxyToURL, strings.NewReader(string(jsonBytes)))
+	req, err := http.NewRequest("POST", proxyToURL+r.URL.Path, strings.NewReader(string(jsonBytes)))
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
