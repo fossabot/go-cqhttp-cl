@@ -1,26 +1,25 @@
-local: # 本地服务端的配置
-  # 发送图片的延迟秒数
-  image_send_delay: 2
-  # websocket配置
-  ws:
-    # websocket监听地址
-    address: 127.0.0.1
-    # websocket监听端口
-    port: 6700
-  # http配置
-  http:
-    # http监听地址
-    address: 127.0.0.1
-    # http监听端口
-    port: 5700
+# 你设置的token，在进行http反代和连接远程ws服务器时会自动带上，如果你不知道这是什么就留空
+token: ''
+# webocket配置，连接到指定的远程服务器，然后在本地开一个ws服务器，双向转发本地连接和远程连接的消息
+websocket:
+  enable: true
+  url: ws://127.0.0.1:8080
+  listen: 127.0.0.1:6700
 
-#远程服务器配置
-remote:
-  # 与配置的access-token相同，不知道这是什么可以不写
-  access-token:
-  ws:
-    #远程websocket服务器访问链接，本地ws服务器收到的消息将会转发给此远程服务器
-    url: ws://127.0.0.1:8080
-  http:
-    # 远程http服务器访问链接，本地http服务器收到的消息将会转发给此远程服务器
-    url: http://127.0.0.1:8090
+# http反向代理
+http_reverse_proxy:
+  enable: true
+  proxys:
+  # 可以添加多个
+  - from: 127.0.0.1:5700
+    # 这里要填写http链接格式，例如：http://127.0.0.1:5800
+    to: http://127.0.0.1:5800
+
+# 暂未实现
+# tcp代理，可以用来进行ws双向通信
+tcp_proxy:
+  enable: false
+  proxys:
+  # 可以添加多个
+    - from: 127.0.0.1:8080
+      to: 127.0.0.1:8090
